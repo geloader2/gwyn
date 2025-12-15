@@ -15,7 +15,7 @@ const Index = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 glass-panel">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <img src="../gwyn.png" alt="Gwyn Logo" className="h-14 w-22 object-cover rounded-full" />
+            <img src="gwyn.png" alt="Gwyn Logo" className="h-14 w-22 object-cover rounded-full" />
             {/* <span className="font-serif text-2xl font-semibold text-foreground">Gwyn Aesthetic Clinic</span> */}
           </Link>
           <div className="hidden md:flex items-center gap-8">

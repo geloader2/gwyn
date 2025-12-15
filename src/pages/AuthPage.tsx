@@ -112,8 +112,9 @@ const AuthPage = () => {
         </div>
         <div className="relative z-10 flex flex-col justify-center px-16">
           <div className="flex items-center gap-3 mb-8">
-            <Sparkles className="h-10 w-10 text-primary" />
-            <span className="font-serif text-4xl font-semibold text-foreground">Gwyn Aesthetic Clinic</span>
+            {/* <Sparkles className="h-10 w-10 text-primary" />
+            <span className="font-serif text-4xl font-semibold text-foreground">Gwyn Aesthetic Clinic</span> */}
+            <img src="gwyn.png" alt="Gwyn Logo" className="h-17 w-22 object-cover rounded-full" />
           </div>
           <h2 className="font-serif text-4xl font-semibold text-foreground mb-4">
             {isLogin ? 'Welcome Back' : 'Join Our Community'}
@@ -134,8 +135,9 @@ const AuthPage = () => {
         </Link>
 
         <div className="lg:hidden flex items-center gap-2 mb-8">
-          <Sparkles className="h-6 w-6 text-primary" />
-          <span className="font-serif text-2xl font-semibold text-foreground">Gwyn Aesthetic Clinic</span>
+          {/* <Sparkles className="h-6 w-6 text-primary" />
+          <span className="font-serif text-2xl font-semibold text-foreground">Gwyn Aesthetic Clinic</span> */}
+          <img src="gwyn.png" alt="Gwyn Logo" className="h-18 w-30 object-cover rounded-full" />
         </div>
 
         <div className="max-w-md w-full mx-auto lg:mx-0">
