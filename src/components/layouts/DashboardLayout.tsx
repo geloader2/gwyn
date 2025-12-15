@@ -82,7 +82,7 @@ const DashboardLayout = () => {
         {/* Logo */}
         <div className="p-6 border-b border-border flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <img src="/public/gwyn.png" alt="Gwyn Logo" className="h-14 w-22 object-cover rounded-full" />
+            <img src="/gwyn.png" alt="Gwyn Logo" className="h-14 w-22 object-cover rounded-full" />
           </Link>
           <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setSidebarOpen(false)}>
             <X className="h-5 w-5" />

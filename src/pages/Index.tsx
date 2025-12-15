@@ -15,7 +15,7 @@ const Index = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 glass-panel">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <img src="/public/gwyn.png" alt="Gwyn Logo" className="h-14 w-22 object-cover rounded-full" />
+            <img src="/gwyn.png" alt="Gwyn Logo" className="h-14 w-22 object-cover rounded-full" />
             {/* <span className="font-serif text-2xl font-semibold text-foreground">Gwyn Aesthetic Clinic</span> */}
           </Link>
           <div className="hidden md:flex items-center gap-8">
@@ -102,7 +102,7 @@ const Index = () => {
             <div className="relative hidden lg:block">
               <div className="relative rounded-3xl overflow-hidden shadow-2xl">
                 <img 
-                  src="../public/gwyncover.avif" 
+                  src="../gwyncover.avif" 
                   alt="Gwyn Aesthetic Clinic Interior" 
                   className="w-full h-auto object-cover rounded-3xl"
                 />
@@ -135,7 +135,7 @@ const Index = () => {
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
-                  {/* <img src="/public/gwyncover.avif" alt="Gwyn Logo" className="h-6 w-6 object-cover rounded-full" /> */}
+                  {/* <img src="/gwyncover.avif" alt="Gwyn Logo" className="h-6 w-6 object-cover rounded-full" /> */}
                 </div>
                 <h3 className="font-serif text-xl font-semibold text-foreground mb-2">{service.name}</h3>
                 <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{service.description}</p>
@@ -201,7 +201,7 @@ const Index = () => {
               <div className="aspect-[4/5] rounded-3xl bg-gradient-to-br from-primary/20 via-accent/30 to-secondary overflow-hidden">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center p-8">
-                    <img src="/public/cover2.avif" alt="Gwyn Logo" className="h-356 w-90 object-cover mx-auto mb-4" />
+                    <img src="/cover2.avif" alt="Gwyn Logo" className="h-356 w-90 object-cover mx-auto mb-4" />
                     <p className="text-muted-foreground font-serif text-xl">Where Science Meets Beauty</p>
                   </div>
                 </div>
@@ -278,7 +278,7 @@ const Index = () => {
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <img src="../public/gwyn.png" alt="Gwyn Logo" className="h-14 w-22 object-cover rounded-full" />
+              <img src="../gwyn.png" alt="Gwyn Logo" className="h-14 w-22 object-cover rounded-full" />
               {/* <span className="font-serif text-xl font-semibold text-foreground">Gwyn Aesthetic Clinic</span> */}
             </div>
             <p className="text-muted-foreground text-sm">

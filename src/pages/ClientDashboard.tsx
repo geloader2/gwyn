@@ -63,7 +63,7 @@ const ClientDashboard = () => {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2">
-              <img src="/public/gwyn.png" alt="Gwyn Logo" className="h-14 w-22 object-cover rounded-full" />
+              <img src="/gwyn.png" alt="Gwyn Logo" className="h-14 w-22 object-cover rounded-full" />
             </Link>
             <div className="flex items-center gap-3">
               <Link to="/book">
