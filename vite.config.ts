@@ -5,15 +5,22 @@ import { componentTagger } from "lovable-tagger"
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: "/gwyn/",
+  base: process.env.NODE_ENV === "production" ? "/gwyn/" : "/",
   server: {
     host: "::",
     port: 8080,
   },
-  plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
+  plugins: [
+    react(),
+    mode === "development" && componentTagger(),
+  ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  build: {
+    outDir: "dist",
+    sourcemap: false,
   },
 }))
