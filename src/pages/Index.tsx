@@ -1,14 +1,18 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Calendar, Clock, Star, Users, Sparkles, ArrowRight, Phone, Mail, MapPin, LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useServices } from '@/hooks/useServices';
+import { useScrollToHash } from '@/hooks/useScrollToHash';
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
   const { services } = useServices();
   const featuredServices = (services || []).filter(s => s.is_active).slice(0, 4);
-
+  const scrollToHash = useScrollToHash();
+  const handleScroll = (sectionId: string) => {
+    scrollToHash(sectionId);
+  };
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -19,9 +23,30 @@ const Index = () => {
             {/* <span className="font-serif text-2xl font-semibold text-foreground">Gwyn Aesthetic Clinic</span> */}
           </Link>
           <div className="hidden md:flex items-center gap-8">
-            <a href="#services" className="text-muted-foreground hover:text-foreground transition-colors">Services</a>
-            <a href="#about" className="text-muted-foreground hover:text-foreground transition-colors">About</a>
-            <a href="#contact" className="text-muted-foreground hover:text-foreground transition-colors">Contact</a>
+          <button 
+              onClick={() => handleScroll('home')}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Home
+            </button>
+          <button 
+              onClick={() => handleScroll('services')}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Services
+            </button>
+            <button 
+              onClick={() => handleScroll('about')}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              About
+            </button>
+            <button 
+              onClick={() => handleScroll('contact')}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Contact
+            </button>
           </div>
           <div className="flex items-center gap-3">
             {!loading && (
@@ -48,7 +73,7 @@ const Index = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center hero-gradient pt-20">
+      <section id="home" className="relative min-h-screen flex items-center hero-gradient pt-20">
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-1/4 -right-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
           <div className="absolute bottom-1/4 -left-20 w-80 h-80 bg-accent/30 rounded-full blur-3xl" />
@@ -72,11 +97,11 @@ const Index = () => {
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
-                <a href="#services">
-                  <Button variant="outline" size="xl">
+              
+                  <Button onClick={() => handleScroll('services')} variant="outline" size="xl">
                     Explore Services
                   </Button>
-                </a>
+                 
               </div>
 
               {/* Stats */}
