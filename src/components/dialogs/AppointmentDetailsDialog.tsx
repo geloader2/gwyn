@@ -4,13 +4,14 @@ import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import type { AppointmentWithDetails } from "@/hooks/useAppointments"
 import { format, parseISO } from "date-fns"
-import { X, Clock, Edit, Trash, MoreVertical, CalendarIcon } from "lucide-react"
+import { X, Clock, Edit, Trash, MoreVertical, CalendarIcon, User } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
 import { useState, useEffect } from "react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useServices } from "@/hooks/useServices"
 import { BookingDialog } from "./BookingDialog"
+import { useIsMobile } from "@/hooks/use-mobile" // Add this import
 
 interface AppointmentDetailsDialogProps {
   open: boolean
@@ -32,6 +33,7 @@ export const AppointmentDetailsDialog = ({
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const { services } = useServices()
   const [rescheduleDialogOpen, setRescheduleDialogOpen] = useState(false)
+  const isMobile = useIsMobile() // Add mobile detection
 
   useEffect(() => {
     if (appointment && appointment.service_ids) {
@@ -43,7 +45,6 @@ export const AppointmentDetailsDialog = ({
   if (!appointment) {
     return null
   }
-  // </CHANGE>
 
   const handleCheckout = async () => {
     setIsCheckingOut(true)
@@ -146,129 +147,150 @@ export const AppointmentDetailsDialog = ({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-2xl p-0">
-          <div className="bg-blue-500 text-white p-6 rounded-t-lg relative">
+        <DialogContent className={isMobile ? "max-w-[95vw] p-0 h-[90vh] overflow-y-auto" : "max-w-2xl p-0"}>
+          {/* Header Section - Responsive */}
+          <div className="bg-blue-500 text-white p-4 md:p-6 rounded-t-lg relative">
             <button
               onClick={() => onOpenChange(false)}
-              className="absolute top-4 left-4 text-white hover:bg-white/20 rounded-full p-1 transition-colors"
+              className="absolute top-3 left-3 md:top-4 md:left-4 text-white hover:bg-white/20 rounded-full p-1 transition-colors"
             >
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4 md:h-5 md:w-5" />
             </button>
 
-            <div className="flex items-center justify-between">
+            <div className={isMobile ? "pt-6" : "flex items-center justify-between"}>
               <div>
-                <h2 className="text-2xl font-semibold mb-2">
-                  {format(parseISO(appointment.appointment_date), "EEE d MMM")}
+                <h2 className={isMobile ? "text-xl font-semibold mb-1" : "text-2xl font-semibold mb-2"}>
+                  {format(parseISO(appointment.appointment_date), isMobile ? "d MMM" : "EEE d MMM")}
                 </h2>
-                <div className="flex items-center gap-2 text-white/90">
-                  <Clock className="h-4 w-4" />
+                <div className="flex items-center gap-1 md:gap-2 text-white/90 text-xs md:text-sm">
+                  <Clock className="h-3 w-3 md:h-4 md:w-4" />
                   <span>{appointment.start_time}</span>
-                  <span>•</span>
-                  <span>Doesn't repeat</span>
+                  {!isMobile && (
+                    <>
+                      <span>•</span>
+                      <span>Doesn't repeat</span>
+                    </>
+                  )}
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <span className="px-4 py-1.5 bg-white/20 rounded-full text-sm font-medium border border-white/30">
+              <div className="flex items-center gap-3 mt-2 md:mt-0">
+                <span className="px-3 py-1 md:px-4 md:py-1.5 bg-white/20 rounded-full text-xs md:text-sm font-medium border border-white/30">
                   {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="flex">
-            <div className="w-80 bg-slate-900 text-white p-6 flex flex-col items-center">
-              <div className="w-24 h-24 bg-indigo-600 rounded-full flex items-center justify-center text-3xl font-bold mb-4">
+          {/* Main Content - Responsive Layout */}
+          <div className={isMobile ? "flex flex-col" : "flex"}>
+            {/* Client Info Sidebar - Stack on mobile */}
+            <div className={`
+              ${isMobile ? 'w-full p-4' : 'w-80 p-6'} 
+              bg-slate-900 text-white 
+              ${isMobile ? 'flex flex-row items-center gap-4' : 'flex flex-col items-center'}
+            `}>
+              <div className={`
+                ${isMobile ? 'w-12 h-12' : 'w-24 h-24'} 
+                bg-indigo-600 rounded-full flex items-center justify-center 
+                ${isMobile ? 'text-lg' : 'text-3xl'} font-bold mb-4 md:mb-4
+              `}>
                 {getInitials(appointment.client_name || "Unknown")}
               </div>
-              <h3 className="text-xl font-semibold mb-1">{appointment.client_name}</h3>
-              <p className="text-slate-400 text-sm mb-8">Client</p>
+              
+              <div className={isMobile ? "flex-1" : ""}>
+                <h3 className={`${isMobile ? "text-base" : "text-xl"} font-semibold mb-1`}>
+                  {appointment.client_name}
+                </h3>
+                <p className="text-slate-400 text-xs md:text-sm mb-4 md:mb-8">Client</p>
 
-              <div className="w-full space-y-3">
-                <button className="w-full py-2.5 bg-white/10 hover:bg-white/20 rounded-lg text-sm transition-colors border border-white/20">
-                  Actions
-                </button>
-                <button className="w-full py-2.5 bg-white/10 hover:bg-white/20 rounded-lg text-sm transition-colors border border-white/20">
-                  View profile
-                </button>
-              </div>
+                {!isMobile && (
+                  <div className="w-full space-y-3">
+                    <button className="w-full py-2.5 bg-white/10 hover:bg-white/20 rounded-lg text-sm transition-colors border border-white/20">
+                      Actions
+                    </button>
+                    <button className="w-full py-2.5 bg-white/10 hover:bg-white/20 rounded-lg text-sm transition-colors border border-white/20">
+                      View profile
+                    </button>
+                  </div>
+                )}
 
-              <div className="mt-8 w-full space-y-4">
-                <div className="flex items-center gap-3 text-sm">
-                  <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  <span className="text-slate-400">Add pronouns</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                  <span className="text-slate-400">Add date of birth</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <span className="text-white">Created {format(parseISO(appointment.created_at), "d MMM yyyy")}</span>
+                <div className={isMobile ? "grid grid-cols-2 gap-2" : "mt-8 w-full space-y-4"}>
+                  {!isMobile && (
+                    <>
+                      <div className="flex items-center gap-3 text-sm">
+                        <User className="w-4 h-4 md:w-5 md:h-5 text-slate-400" />
+                        <span className="text-slate-400">Add pronouns</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-sm">
+                        <CalendarIcon className="w-4 h-4 md:w-5 md:h-5 text-slate-400" />
+                        <span className="text-slate-400">Add date of birth</span>
+                      </div>
+                    </>
+                  )}
+                  <div className="flex items-center gap-2 md:gap-3 text-xs md:text-sm">
+                    <svg className="w-3 h-3 md:w-5 md:h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span className="text-white">Created {format(parseISO(appointment.created_at), isMobile ? "d MMM yy" : "d MMM yyyy")}</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex-1 p-6">
+            {/* Services and Actions Section */}
+            <div className={`flex-1 ${isMobile ? 'p-4' : 'p-6'}`}>
+              {/* Services Header */}
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Services</h3>
+                <h3 className={`${isMobile ? "text-base" : "text-lg"} font-semibold`}>Services</h3>
                 {!editingServices && appointment.status !== "completed" && (
-                  <Button variant="ghost" size="sm" onClick={() => setEditingServices(true)}>
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit
+                  <Button 
+                    variant="ghost" 
+                    size={isMobile ? "sm" : "sm"}
+                    onClick={() => setEditingServices(true)}
+                    className={isMobile ? "h-8 px-2" : ""}
+                  >
+                    <Edit className={`${isMobile ? "h-3 w-3" : "h-4 w-4"} mr-1 md:mr-2`} />
+                    {!isMobile && "Edit"}
                   </Button>
                 )}
               </div>
 
-              <div className="space-y-4">
-                {currentServices.map((service, index) => (
-                  <div key={service.id} className="flex items-start gap-3 pb-4 border-b border-slate-200">
-                    <div className="w-1 h-16 bg-blue-500 rounded-full"></div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-slate-900">{service.name}</h4>
-                      <p className="text-sm text-slate-600 mt-1">
-                        {appointment.start_time} • in {service.duration}min • {appointment.staff_name}
+              {/* Services List */}
+              <div className="space-y-3 md:space-y-4">
+                {currentServices.map((service) => (
+                  <div key={service.id} className="flex items-start gap-2 md:gap-3 pb-3 md:pb-4 border-b border-slate-200">
+                    <div className="w-1 h-12 md:h-16 bg-blue-500 rounded-full flex-shrink-0"></div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-slate-900 text-sm md:text-base">{service.name}</h4>
+                      <p className="text-xs md:text-sm text-slate-600 mt-0.5 md:mt-1">
+                        {appointment.start_time} • {service.duration}min • {appointment.staff_name}
                       </p>
                     </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-slate-900">₱{service.price}</p>
+                    <div className="text-right flex-shrink-0">
+                      <p className="font-semibold text-slate-900 text-sm md:text-base">₱{service.price}</p>
                       {editingServices && (
                         <button
                           onClick={() => toggleService(service.id)}
-                          className="mt-2 text-red-500 hover:text-red-700"
+                          className="mt-1 md:mt-2 text-red-500 hover:text-red-700"
                         >
-                          <Trash className="h-4 w-4" />
+                          <Trash className="h-3 w-3 md:h-4 md:w-4" />
                         </button>
                       )}
                     </div>
                   </div>
                 ))}
 
+                {/* Available Services for Editing */}
                 {editingServices && (
-                  <div className="border-t border-slate-200 pt-4">
-                    <p className="text-sm font-medium text-slate-700 mb-2">Available Services:</p>
-                    <div className="space-y-2">
+                  <div className="border-t border-slate-200 pt-3 md:pt-4">
+                    <p className="text-xs md:text-sm font-medium text-slate-700 mb-2">Available Services:</p>
+                    <div className="space-y-1 md:space-y-2">
                       {services
                         .filter((s) => !selectedServices.includes(s.id) && s.is_active)
                         .map((service) => (
@@ -277,23 +299,26 @@ export const AppointmentDetailsDialog = ({
                             onClick={() => toggleService(service.id)}
                             className="w-full flex items-center justify-between p-2 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors text-left"
                           >
-                            <div>
-                              <p className="font-medium text-slate-900">{service.name}</p>
-                              <p className="text-sm text-slate-600">{service.duration}min</p>
+                            <div className="min-w-0">
+                              <p className="font-medium text-slate-900 text-sm md:text-base truncate">{service.name}</p>
+                              <p className="text-xs md:text-sm text-slate-600">{service.duration}min</p>
                             </div>
-                            <p className="font-semibold text-slate-900">₱{service.price}</p>
+                            <p className="font-semibold text-slate-900 text-sm md:text-base flex-shrink-0 ml-2">
+                              ₱{service.price}
+                            </p>
                           </button>
                         ))}
                     </div>
                   </div>
                 )}
 
+                {/* Add Service Button */}
                 {!editingServices && appointment.status !== "completed" && (
                   <button
                     onClick={() => setEditingServices(true)}
-                    className="flex items-center gap-2 text-blue-500 hover:text-blue-600 transition-colors"
+                    className="flex items-center gap-1 md:gap-2 text-blue-500 hover:text-blue-600 transition-colors text-sm md:text-base"
                   >
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
                     <span className="font-medium">Add service</span>
@@ -301,10 +326,11 @@ export const AppointmentDetailsDialog = ({
                 )}
               </div>
 
-              <div className="mt-8 pt-6 border-t border-slate-200">
-                <div className="flex items-center justify-between mb-6">
-                  <span className="text-lg font-semibold">Total</span>
-                  <span className="text-2xl font-bold">
+              {/* Total and Actions */}
+              <div className={`${isMobile ? 'mt-6' : 'mt-8'} pt-4 md:pt-6 border-t border-slate-200`}>
+                <div className="flex items-center justify-between mb-4 md:mb-6">
+                  <span className={`${isMobile ? 'text-base' : 'text-lg'} font-semibold`}>Total</span>
+                  <span className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold`}>
                     ₱
                     {editingServices
                       ? currentServices.reduce((sum, s) => sum + Number(s.price), 0)
@@ -313,7 +339,7 @@ export const AppointmentDetailsDialog = ({
                 </div>
 
                 {editingServices ? (
-                  <div className="flex gap-3">
+                  <div className={`flex gap-2 md:gap-3 ${isMobile ? 'flex-col' : ''}`}>
                     <Button
                       variant="outline"
                       onClick={() => {
@@ -321,28 +347,33 @@ export const AppointmentDetailsDialog = ({
                         setSelectedServices(appointment.service_ids || [])
                         setHasUnsavedChanges(false)
                       }}
-                      className="flex-1"
+                      className={isMobile ? "w-full" : "flex-1"}
                     >
                       Cancel
                     </Button>
                     <Button
                       onClick={handleSaveServices}
                       disabled={!hasUnsavedChanges || selectedServices.length === 0}
-                      className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold"
+                      className={`${isMobile ? 'w-full' : 'flex-1'} bg-blue-500 hover:bg-blue-600 text-white font-semibold`}
                     >
                       Save
                     </Button>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-3">
+                  <div className={`flex items-center gap-2 md:gap-3 ${isMobile ? 'flex-col' : ''}`}>
                     {appointment.status !== "completed" && (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="p-3 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
-                            <MoreVertical className="w-5 h-5" />
+                          <button className={`
+                            ${isMobile ? 'w-full flex items-center justify-center gap-2 py-2.5' : 'p-3'}
+                            border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors
+                            ${isMobile ? 'text-sm' : ''}
+                          `}>
+                            <MoreVertical className="w-4 h-4 md:w-5 md:h-5" />
+                            {isMobile && "More Options"}
                           </button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start">
+                        <DropdownMenuContent align={isMobile ? "center" : "start"} className={isMobile ? "w-[90vw]" : ""}>
                           <DropdownMenuItem onClick={() => setRescheduleDialogOpen(true)}>
                             <CalendarIcon className="h-4 w-4 mr-2" />
                             Reschedule
@@ -354,20 +385,26 @@ export const AppointmentDetailsDialog = ({
                         </DropdownMenuContent>
                       </DropdownMenu>
                     )}
-                  <Button
-                    onClick={handleCheckout}
-                    disabled={isCheckingOut || appointment.status === "completed" || appointment.status === "cancelled"}
-                    className="flex-1 bg-white hover:bg-slate-50 text-slate-900 border-2 border-slate-900 font-semibold py-6 text-lg rounded-full"
+                    <Button
+                      onClick={handleCheckout}
+                      disabled={isCheckingOut || appointment.status === "completed" || appointment.status === "cancelled"}
+                      className={`
+                        ${isMobile ? 'w-full py-3 text-base' : 'flex-1 py-6 text-lg'} 
+                        ${appointment.status === "completed" || appointment.status === "cancelled"
+                          ? 'bg-slate-100 text-slate-400 cursor-not-allowed border-slate-300'
+                          : 'bg-white hover:bg-slate-50 text-slate-900 border-2 border-slate-900'
+                        } 
+                        font-semibold rounded-full
+                      `}
                     >
-                    {isCheckingOut
+                      {isCheckingOut
                         ? "Processing..."
                         : appointment.status === "completed"
                         ? "Already Checked Out"
                         : appointment.status === "cancelled"
-                            ? "Cancelled Appointment"
-                            : "Checkout"}
+                        ? "Cancelled Appointment"
+                        : "Checkout"}
                     </Button>
-                                        
                   </div>
                 )}
               </div>
@@ -376,6 +413,7 @@ export const AppointmentDetailsDialog = ({
         </DialogContent>
       </Dialog>
 
+      {/* Reschedule Dialog */}
       {appointment && (
         <BookingDialog
           open={rescheduleDialogOpen}
@@ -384,7 +422,6 @@ export const AppointmentDetailsDialog = ({
           editingAppointment={appointment}
         />
       )}
-      {/* </CHANGE> */}
     </>
   )
 }
